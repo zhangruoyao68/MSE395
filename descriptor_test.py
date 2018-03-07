@@ -110,10 +110,10 @@ Elements=[]
 for i in range(0,len(ElementList)):
     Elements.append(ElementList[i][1].decode("utf-8"))
 ElemData=[]#[[]]*len(Elements)
+print(Elements)
+print(element(8).ionic_radii)
 block = {'s':0,'p':1,'d':2,'f':3}
 
-
-print(element(8))
 for elem in Elements:
     row=[elem]
     sTot=0
@@ -158,7 +158,7 @@ for elem in Elements:
     row.append(element(elem).ionic_radii[0].ionic_radius)
     row.append(element(elem).dipole_polarizability)
     row.append(float(block[element(elem).block]))
-    row.append(element(elem).atomic_radius**3*10**(-7))
+    #row.append(element(elem).atomic_radius**3*10**(-7))
     ElemData.append(row)
     print(row)
 #print(ElemData)

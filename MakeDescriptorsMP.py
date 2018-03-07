@@ -156,7 +156,7 @@ for elem in Elements:
 #print(ElemData)
 
 ElementData={d[0]: d[1:] for d in ElemData}
-
+'''
 DOSData=np.genfromtxt('IntegratedDos.csv',delimiter=',',dtype=None)
 for i in range(0,len(DOSData)):
     Element=DOSData[i][0].decode("utf-8").split("_")[0]
@@ -169,9 +169,10 @@ for i in range(0,len(suscData)):
     Element=suscData[i][0].decode("utf-8").split("_")[0]
     if Element in ElementData:
         ElementData[Element].append(suscData[i][1])
-
+'''
 API_Key='pF2RrzEPyZmIsLST'
 m=MPRester(API_Key)
+
 
 
 for i in range(0,numMaterials):
