@@ -22,6 +22,7 @@ import time
 from pymatgen.ext.matproj import MPRester, MPRestError
 
 start_time = time.time()
+#3/7/18
 
 def SymmGroupFinder(GroupNum):
     if 1<=GroupNum<=2:
