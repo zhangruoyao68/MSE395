@@ -1,5 +1,2 @@
 Materials ID,Formula,Epilson infinity (primary axis = a),Epilson Infinity (along Secondary axis= c),Reference,Frequency (Hz),Notes (temperature if not at RT),Epilson 0  (primary axis = a),Epilson 0 (Secondary axis= c),Reference ,Frequency (Hz),Notes
 mp-561620,Ag3AsS3,22,,"Journal of Physics D: Applied Physics, Volume 2, Number 2",,,,,,,
-mp-9519,AgCN,5.6,,https://www.instrumatics.co.nz/site/instrumatics/files/Documents/dielectric-constant-values.pdf,1M,,,,,,
-mp-1029,BaF2,7.32,,PERMITTIVITY (DIELECTRIC CONSTANT) OF INORGANIC SOLIDS,5*10^2-10^11,292K,,,,,
-mp-1500,BaS,19.23,,PERMITTIVITY (DIELECTRIC CONSTANT) OF INORGANIC SOLIDS,7.25*10^6,RT,,,,,
