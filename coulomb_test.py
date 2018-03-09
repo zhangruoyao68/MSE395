@@ -9,6 +9,7 @@ from pymatgen.core import periodic_table
 import numpy as np
 import pymatgen as mg
 from scipy.linalg import eig
+import csv
 
 def WriteFiles(Chem,targets,descriptors,filelist):
     for iii in range(0,len(filelist)):
@@ -23,15 +24,15 @@ def WriteFiles(Chem,targets,descriptors,filelist):
 API_Key='pF2RrzEPyZmIsLST'
 MaxAtoms=160
 
-PlasmonicData=pd.read_csv('test.csv')#input descriptor data file
-print(PlasmonicData["Materials ID"])
+CMData=pd.read_csv('test.csv')#input descriptor data file
+print(CMData["Materials ID"])
 
-EValFiles=np.atleast_1d(['CoulombEValsGap.csv'])
-
+EValFiles=np.atleast_1d(['CoulombResults.csv'])
+CMlists=[]
 with MPRester(API_Key) as mp:# Materials Project API imported
 
-    for i in range(0,len(PlasmonicData)):
-        MPName=PlasmonicData['Materials ID'][i]
+    for i in range(0,len(CMData)):
+        MPName=CMData['Materials ID'][i]
         StructDat = mp.query(criteria={"task_id": MPName}, properties=['structure','nsites'])
         #print(StructDat)
         nAtoms=int(StructDat[0]['nsites'])
@@ -59,11 +60,9 @@ with MPRester(API_Key) as mp:# Materials Project API imported
         #print(vals)
         #print(len(vals))
         EVals=[v.real for v in sorted(vals,reverse=True)]
-        print(EVals)
-#        WriteFiles(PlasmonicData['Material'][i],PlasmonicData.iloc[i, -1],EVals,EValFiles)
-        
-        #find max row
-        #rowvals=CMat.sum(axis=0)
-        #maxrow=np.argmax(rowvals)
-        #MaxRow=sorted(CMat[maxrow],reverse=True)
-        #WriteFiles(PlasmonicData['Chemical'][i],PlasmonicData.iloc[i, -1].values.tolist(),MaxRow,RowFiles)
+        CMlists.append(EVals)
+        WriteFiles(CMData['Materials ID'][i],CMData.iloc[i, -1],EVals,EValFiles)
+'''
+print(CMdata)
+df = pd.DataFrame(CMdata)
+df.to_csv('CMdata.csv', index=False, header=False)'''
