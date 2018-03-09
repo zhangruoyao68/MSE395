@@ -19,6 +19,7 @@ from os import remove, close
 from itertools import combinations
 import numpy as np
 import time
+import csv
 from pymatgen.ext.matproj import MPRester, MPRestError
 
 start_time = time.time()
@@ -188,6 +189,11 @@ for elem in Elements:
     #print(row)
 #ElementData={d[0]: d[1:] for d in ElemData}
 #print(ElemData)
+Database=[]
+
+    #csvfile.write(Comp+,"+sTot+","+pTot+","+dTot+","+fTor,AverageMass,DevMass,RedMass,AvgENeg,DiffENeg,DevENeg,AvgDipole')
+    #csvfile.write('DevDipole,DiffDipole,TotalVolume,totalAtoms,density,OmegaAvg,OmegaDev,OmegaMax,OmegaMin')
+    #csvfile.write('eHull,formE,gap,symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma\n')
 
 for i in range(0,numMaterials):
     #Comp,MPID=Compounds[i].split("_")
@@ -278,11 +284,16 @@ for i in range(0,numMaterials):
                     #if ElemData[x][6]<IonEnLow:
                         #IonEnLow=ElemData[x][6]
                         #AtomicRads_IonEnLow=ElementData[x][8]
+        row1=[]
 
         sTot=sTot/totalAtoms
+
         pTot=pTot/totalAtoms
+        #row1.append(pTot)
         dTot=dTot/totalAtoms
+        #row1.append(dTot)
         fTot=fTot/totalAtoms
+        #row1.append(fTot)
 
         AverageMass=np.average(Masses)
         DevMass=np.std(Masses)
@@ -340,16 +351,22 @@ for i in range(0,numMaterials):
         OmegaMin=min(Omegas)
         #print(OmegaAvg,OmegaDev,OmegaMax,OmegaMin)
 
+
         #output list
-        print(Comp)
-        print(sTot,pTot,dTot,fTot)
-        print(AverageMass,DevMass,RedMass)
-        print(AvgENeg,DiffENeg,DevENeg)
-        print(AvgDipole,DevDipole,DiffDipole)
-        print(TotalVolume,totalAtoms,density)
-        print(OmegaAvg,OmegaDev,OmegaMax,OmegaMin)
-        print(eHull,formE,gap)
-        print(symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma)
+        #print(Comp)
+        #print(sTot,pTot,dTot,fTot)
+        #print(AverageMass,DevMass,RedMass)
+        #print(AvgENeg,DiffENeg,DevENeg)
+        #print(AvgDipole,DevDipole,DiffDipole)
+        #print(TotalVolume,totalAtoms,density)
+        #print(OmegaAvg,OmegaDev,OmegaMax,OmegaMin)
+        #print(eHull,formE,gap)
+        #print(symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma)
+
+
+        row1.extend([Comp,sTot,pTot,dTot,fTot,AverageMass,DevMass,RedMass,AvgENeg,DiffENeg,DevENeg,AvgDipole,DevDipole,DiffDipole,TotalVolume,totalAtoms,density,OmegaAvg,OmegaDev,OmegaMax,OmegaMin,eHull,formE,gap,symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma])
+        Database.append(row1)
+
 
 
         #ion radius data unrealiable
@@ -424,21 +441,25 @@ for i in range(0,numMaterials):
         f.write('\n')
         continue
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#ar=np.asarray(Database)
+print(Database)
+#ar=str(np.asarray(Database))
+#np.savetxt('descriptors.csv',ar,delimiter=',')
 f.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
