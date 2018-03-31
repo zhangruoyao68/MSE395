@@ -22,13 +22,20 @@ def WriteFiles(Chem,targets,descriptors,filelist):
     return
 
 API_Key='pF2RrzEPyZmIsLST'
-MaxAtoms=160
+MaxAtoms=200
 
 CMData=pd.read_csv('test.csv')#input descriptor data file
-print(CMData["Materials ID"])
+#print(CMData["Materials ID"])
+f=open('CoulombResults.csv','w')
+f.write('Material ID,')
+for i in range(0,MaxAtoms):
+    f.write('cm%s,' % str(i))
+f.write('\n')
 
 EValFiles=np.atleast_1d(['CoulombResults.csv'])
 CMlists=[]
+
+
 with MPRester(API_Key) as mp:# Materials Project API imported
 
     for i in range(0,len(CMData)):
@@ -37,13 +44,13 @@ with MPRester(API_Key) as mp:# Materials Project API imported
         #print(StructDat)
         nAtoms=int(StructDat[0]['nsites'])
         #print(nAtoms)
-        
+
         NuclearCharges=[]
         for qq in range(0,nAtoms):
             current=str(StructDat[0]['structure'].sites[qq]._species)
             elem=''.join(ii for ii in current if not ii.isdigit())
-            NuclearCharges.append(mg.Element(elem).Z)                           
-        
+            NuclearCharges.append(mg.Element(elem).Z)
+
         CMat=np.zeros(MaxAtoms**2).reshape(MaxAtoms, MaxAtoms)
         #make offdiagonal components
         for k in range(0,nAtoms): #this makes lower triangle
@@ -53,15 +60,23 @@ with MPRester(API_Key) as mp:# Materials Project API imported
         #make diagonal components
         for k in range(0,nAtoms):
             CMat[k][k]=0.5*NuclearCharges[k]**2.4
-        
+
         #find eigenvals
         #print(CMat)
         vals,vecs=eig(CMat)
         #print(vals)
         #print(len(vals))
         EVals=[v.real for v in sorted(vals,reverse=True)]
-        CMlists.append(EVals)
-        WriteFiles(CMData['Materials ID'][i],CMData.iloc[i, -1],EVals,EValFiles)
+        #CMlists.append(EVals)
+        f.write(MPName)
+        f.write(',')
+        for item in EVals:
+            f.write(str(item)+',')
+        f.write('\n')
+        print(MPName)
+    #WriteFiles(CMData['Materials ID'][i],CMData.iloc[i, -1],EVals,EValFiles)
+
+f.close()
 '''
 print(CMdata)
 df = pd.DataFrame(CMdata)

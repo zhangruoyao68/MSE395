@@ -92,14 +92,14 @@ def NameAnalyzer(NameToTest):
 #test.cv is the compound list
 MaterialsFile=pd.read_csv("test.csv") #test1.csv is the modified data we collected
 #print(MaterialsFile)
-print("reading SourceFile completion")
 f=open('CompoundDescriptorsMP.csv','w')
 ID=[]
-#target=[]
+target=[]
 for i in range(0,len(MaterialsFile)):
   ID.append(MaterialsFile['Materials ID'][i]) #containing all the IDs of training set
-  #target.append(MaterialsFile['Epilson infinity'][i])
+  target.append(MaterialsFile['Epsilon'][i])
 numMaterials=len(ID)
+print("reading SourceFile completion")
 #print(ID)
 #print("Number Of Materials Analyzed:---%s---" % (numMaterials))
 API_Key='pF2RrzEPyZmIsLST'
@@ -200,7 +200,7 @@ print("Element Data Collection Completion:--- %s seconds ---" % (time.time() - s
     #csvfile.write(Comp+,"+sTot+","+pTot+","+dTot+","+fTor,AverageMass,DevMass,RedMass,AvgENeg,DiffENeg,DevENeg,AvgDipole')
     #csvfile.write('DevDipole,DiffDipole,TotalVolume,totalAtoms,density,OmegaAvg,OmegaDev,OmegaMax,OmegaMin')
     #csvfile.write('eHull,formE,gap,symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma\n')
-f.write('Comp,sTot,pTot,dTot,fTot,NAtom,AverageMass,DevMass,RedMass,AvgENeg,DiffENeg,DevENeg,AvgDipole,DevDipole,DiffDipole,TotalVolume,totalAtoms,density,OmegaAvg,OmegaDev,OmegaMax,OmegaMin,eHull,formE,gap,symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma')
+f.write('Comp,Epsilon,sTot,pTot,dTot,fTot,NAtom,AverageMass,DevMass,RedMass,AvgENeg,DiffENeg,DevENeg,AvgDipole,DevDipole,DiffDipole,TotalVolume,totalAtoms,density,OmegaAvg,OmegaDev,OmegaMax,OmegaMin,eHull,formE,gap,symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma')
 f.write('\n')
 for i in range(0,numMaterials):
     #Comp,MPID=Compounds[i].split("_")
@@ -381,7 +381,7 @@ for i in range(0,numMaterials):
 
 
 
-        row=[Comp,sTot,pTot,dTot,fTot,NAtom,AverageMass,DevMass,RedMass,AvgENeg,DiffENeg,DevENeg,AvgDipole,DevDipole,DiffDipole,TotalVolume,totalAtoms,density,OmegaAvg,OmegaDev,OmegaMax,OmegaMin,eHull,formE,gap,symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma]
+        row=[Comp,target[i],sTot,pTot,dTot,fTot,NAtom,AverageMass,DevMass,RedMass,AvgENeg,DiffENeg,DevENeg,AvgDipole,DevDipole,DiffDipole,TotalVolume,totalAtoms,density,OmegaAvg,OmegaDev,OmegaMax,OmegaMin,eHull,formE,gap,symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma]
         #print(row1)
         for item in row:
             f.write(str(item)+',')
