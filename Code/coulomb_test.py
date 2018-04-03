@@ -29,7 +29,7 @@ CMData=pd.read_csv('test.csv')#input descriptor data file
 f=open('CoulombResults.csv','w')
 f.write('Material ID,')
 for i in range(0,MaxAtoms):
-    f.write('cm%s,' % str(i))
+    f.write('cm%s,' %str(i))
 f.write('\n')
 
 EValFiles=np.atleast_1d(['CoulombResults.csv'])
