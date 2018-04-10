@@ -1,0 +1,33 @@
+&control
+calculation='scf'
+restart_mode='from_scratch',
+prefix='silicon',
+lelfield=.true.,
+nberrycyc=1
+pseudo_dir='/home/rzhang80/mse395/',
+outdir='/home/rzhang80/mse395/'
+/
+&system
+ibrav= 1, celldm(1)=10.18, nat=  8, ntyp= 1,
+ecutwfc = 30.0
+/
+&electrons
+diagonalization='david',
+conv_thr =  1.0d-8,
+mixing_beta = 0.5,
+startingwfc='random',
+efield_cart(1)=0.d0,efield_cart(2)=0.d0,efield_cart(3)=0.001d0
+/
+ATOMIC_SPECIES
+Si  28.086 Si.rel-pbe-rrkj.UPF
+ATOMIC_POSITIONS
+Si 0.000000 0.000000 0.500000
+Si 0.750000 0.750000 0.750000
+Si 0.000000 0.500000 0.000000
+Si 0.750000 0.250000 0.250000
+Si 0.500000 0.000000 0.000000
+Si 0.250000 0.750000 0.250000
+Si 0.500000 0.500000 0.500000
+Si 0.250000 0.250000 0.750000
+K_POINTS {automatic}
+5 5 5 0 0 0
