@@ -4,8 +4,8 @@ restart_mode='from_scratch',
 prefix='silicon',
 lelfield=.true.,
 nberrycyc=1
-pseudo_dir='/home/rzhang80/mse395/',
-outdir='/home/rzhang80/mse395/'
+pseudo_dir='.',
+outdir='.'
 /
 &system
 ibrav= 1, celldm(1)=10.18, nat=  8, ntyp= 1,
