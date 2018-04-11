@@ -1,8 +1,3 @@
-'''
-Created on Jan 6, 2018
-
-@author: ethan
-'''
 import pandas as pd
 from pymatgen.ext.matproj import MPRester, MPRestError
 from pymatgen.core import periodic_table
