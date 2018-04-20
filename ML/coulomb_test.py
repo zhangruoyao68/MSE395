@@ -17,19 +17,22 @@ def WriteFiles(Chem,targets,descriptors,filelist):
     return
 
 API_Key='pF2RrzEPyZmIsLST'
-MaxAtoms=200
+MaxAtoms=10
 
 MP_all=[]
 with MPRester(API_Key) as mp:
     data = mp.query(criteria={}, properties=["task_id"])
     for i in range(len(data)):
         MP_all.append(data[i]["task_id"])
-#print(MP_all)
+print(MP_all)
 print(len(MP_all))
+
+#test using small testing data
+#Data=pd.read_csv('test.csv',index_col=False, sep=',')
 
 f=open('CoulombResults.csv','w')
 f.write('Material ID,')
-for i in range(0,MaxAtoms):
+for i in range(MaxAtoms):
     f.write('cm%s,' %str(i))
 f.write('\n')
 
@@ -38,12 +41,16 @@ CMlists=[]
 
 with MPRester(API_Key) as mp:# Materials Project API imported
 
-    for i in range(len(MP_all)):
+    for i in range(0,len(MP_all)):
+        #MPName=Data['Materials ID'][i]
         MPName=MP_all[i]
         StructDat = mp.query(criteria={"task_id": MPName}, properties=['structure','nsites'])
         #print(StructDat)
         nAtoms=int(StructDat[0]['nsites'])
         #print(nAtoms)
+        print(MPName)
+        #redefine the size of CMat
+        MaxAtoms=nAtoms+1
 
         NuclearCharges=[]
         for qq in range(0,nAtoms):
@@ -73,7 +80,6 @@ with MPRester(API_Key) as mp:# Materials Project API imported
         for item in EVals:
             f.write(str(item)+',')
         f.write('\n')
-        print(MPName)
     #WriteFiles(CMData['Materials ID'][i],CMData.iloc[i, -1],EVals,EValFiles)
 
 f.close()
