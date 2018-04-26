@@ -90,26 +90,37 @@ def NameAnalyzer(NameToTest):
     return(SeparatedName)
 
 #test.cv is the compound list
-MaterialsFile=pd.read_csv("test.csv") #test1.csv is the modified data we collected
+#MaterialsFile=pd.read_csv("test.csv") #test1.csv is the modified data we collected
 #print(MaterialsFile)
+g=open('CompoundDescriptorsMP_exception.csv','w')
 f=open('CompoundDescriptorsMP.csv','w')
 ID=[]
 target=[]
+'''
 for i in range(0,len(MaterialsFile)):
   ID.append(MaterialsFile['Materials ID'][i]) #containing all the IDs of training set
   target.append(MaterialsFile['Epsilon'][i])
 numMaterials=len(ID)
 print("reading SourceFile completion")
+
 #print(ID)
 #print("Number Of Materials Analyzed:---%s---" % (numMaterials))
+'''
 API_Key='pF2RrzEPyZmIsLST'
 m=MPRester(API_Key)
 
+MPID_DICT= m.query(criteria={}, properties=["task_id"])
+numMaterials=len(MPID_DICT)
+print("Number Of Materials Analyzed:---%s---" % (numMaterials))
+#print(ID)
+#print("Number Of Materials Analyzed:---%s---" % (numMaterials))
+'''
 Compounds=[]
 for i in range(0,len(ID)):
     stabdata = m.query(criteria={'material_id':ID[i]}, properties=["pretty_formula"])
     Compounds.append(stabdata[0]['pretty_formula'])
 #print(Compounds)
+'''
 print("API established")
 ElementList=np.genfromtxt('NameListFile.txt',dtype=None)
 Elements=[]
@@ -118,7 +129,7 @@ for i in range(0,len(ElementList)):
 ElemData=[]#[[]]*len(Elements)
 #print(Elements)
 #print(element(8).ionic_radii)
-print("Periodic Table Completion ---%s---" %(time.time()-start_time))
+#print("Periodic Table Completion ---%s---" %(time.time()-start_time))
 block = {'s':0,'p':1,'d':2,'f':3}
 
 for elem in Elements:
@@ -202,6 +213,8 @@ print("Element Data Collection Completion:--- %s seconds ---" % (time.time() - s
     #csvfile.write('eHull,formE,gap,symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma\n')
 f.write('Comp,Epsilon,sTot,pTot,dTot,fTot,NAtom,AverageMass,DevMass,RedMass,AvgENeg,DiffENeg,DevENeg,AvgDipole,DevDipole,DiffDipole,TotalVolume,totalAtoms,density,OmegaAvg,OmegaDev,OmegaMax,OmegaMin,eHull,formE,gap,symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma')
 f.write('\n')
+
+numberofanalyzed=0
 for i in range(0,numMaterials):
     #Comp,MPID=Compounds[i].split("_")
     #Comp=Compounds[i]
@@ -209,7 +222,10 @@ for i in range(0,numMaterials):
     #MatName=NameAnalyzer(Comp)
     #if 'Ac' in MatName:
     #    continue
-    stabdata = m.query(criteria={'material_id':ID[i]}, properties=["pretty_formula", "e_above_hull",
+
+    res=str(MPID_DICT[i])
+    MPID_length=len(res)
+    stabdata = m.query(criteria={'material_id':res[13:MPID_length-2]}, properties=["pretty_formula", "e_above_hull",
                                                                       "formation_energy_per_atom","band_gap",
                                                                       "spacegroup.number",'volume',
                                                                       'structure','density','e_above_hull','nsites'])
@@ -222,7 +238,7 @@ for i in range(0,numMaterials):
         #if 'material_id' in mini:
     #print(stabdata)
     symm=SymmGroupFinder(stabdata[0]['spacegroup.number'])
-    num = Compounds[i]
+    #num = Compounds[i]
     gap = stabdata[0]['band_gap']
     volume=stabdata[0]['volume']
     formE=stabdata[0]['formation_energy_per_atom']
@@ -246,7 +262,6 @@ for i in range(0,numMaterials):
     NAtom=stabdata[0]['nsites']
     Comp=stabdata[0]['pretty_formula']
     MatName=NameAnalyzer(Comp)
-
     #if ('Ac' or 'Pu') in MatName:
     #    continue
     #print(Comp,num,gap)
@@ -277,12 +292,15 @@ for i in range(0,numMaterials):
         AtomicRads_ENHigh=0
         AtomicRads_IonEnLow=0
 
+        find_all=0
+
         for j in range(0,len(AtomicSpecies)): #this gets reduced electronic configuration
             #print(AtomicSpecies[j])
+
             for x in range(0,len(ElemData)):
 
                 if ElemData[x][0]==AtomicSpecies[j]:
-                    #print(ElemData[x][1])
+                    find_all=find_all+1
                     sTot+=ElemData[x][1]*AtomicRatio[j]
                     pTot+=ElemData[x][2]*AtomicRatio[j]
                     dTot+=ElemData[x][3]*AtomicRatio[j]
@@ -300,6 +318,13 @@ for i in range(0,numMaterials):
                     #if ElemData[x][6]<IonEnLow:
                         #IonEnLow=ElemData[x][6]
                         #AtomicRads_IonEnLow=ElementData[x][8]
+
+        if (find_all<len(AtomicSpecies)):
+            g.write(Comp)
+            g.write('\n')
+
+
+
         row1=[]
 
         sTot=sTot/totalAtoms
@@ -323,7 +348,6 @@ for i in range(0,numMaterials):
         DevDipole=np.std(Dipoles)
         DiffDipole=max(Dipoles)-min(Dipoles)
         TotalVolume = np.sum(Volumes)
-
 
         #print("Halfway")
         '''
@@ -365,7 +389,6 @@ for i in range(0,numMaterials):
         OmegaDev=np.std(Omegas)
         OmegaMax=max(Omegas)
         OmegaMin=min(Omegas)
-        #print(OmegaAvg,OmegaDev,OmegaMax,OmegaMin)
 
 
         #output list
@@ -381,13 +404,14 @@ for i in range(0,numMaterials):
 
 
 
-        row=[Comp,target[i],sTot,pTot,dTot,fTot,NAtom,AverageMass,DevMass,RedMass,AvgENeg,DiffENeg,DevENeg,AvgDipole,DevDipole,DiffDipole,TotalVolume,totalAtoms,density,OmegaAvg,OmegaDev,OmegaMax,OmegaMin,eHull,formE,gap,symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma]
+        row=[Comp,sTot,pTot,dTot,fTot,NAtom,AverageMass,DevMass,RedMass,AvgENeg,DiffENeg,DevENeg,AvgDipole,DevDipole,DiffDipole,TotalVolume,totalAtoms,density,OmegaAvg,OmegaDev,OmegaMax,OmegaMin,eHull,formE,gap,symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma]
         #print(row1)
         for item in row:
             f.write(str(item)+',')
         f.write('\n')
         Database.append(row)
         print("Compound Analyzed:"+Comp)
+        numberofanalyzed+=1
 
 
 
@@ -453,7 +477,7 @@ for i in range(0,numMaterials):
         '''
     except:
         print("exception")
-        data=[Comp,Compounds[i],0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        data=[Comp,Comp,0,0,0,0,0,0,0,0,0,0,0,0,0,
               0,0,0,0,0,0,0,0,0,
               0,0,
               0,0,0,0,0,0,0,0,0,0,0,
@@ -465,7 +489,7 @@ for i in range(0,numMaterials):
         f.write('\n')
         continue
 
-
+g.close()
 
 #ar=np.asarray(Database)
 #print(Database)
@@ -473,7 +497,7 @@ for i in range(0,numMaterials):
 #np.savetxt('descriptors.csv',ar,delimiter=',')
 f.close()
 
-print("Number Of Materials Analyzed:---%s---" % (numMaterials))
+print("Number Of Materials Analyzed:---%s---" % (numberofanalyzed))
 print("Compound Data Sourcing:--- %s seconds ---" % (time.time() - start_time))
 
 #fitting model

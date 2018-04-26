@@ -24,6 +24,11 @@ from pymatgen.ext.matproj import MPRester, MPRestError
 from sklearn import linear_model
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold
+from sklearn.model_selection import cross_val_score, cross_val_predict
+from sklearn.neural_network import MLPRegressor as ML
+from sklearn import metrics
 
 def breakingdown(Matrix,iteration,skipSize):
     new_Matrix=[]
@@ -37,7 +42,7 @@ def breakingdown(Matrix,iteration,skipSize):
 start_time=time.time()
 
 MaterialFile=pd.read_csv("CompoundDescriptorsMP2.csv")
-f=open('RandomForestRegressorResults.csv','w')
+f=open('NeuralNetworkRegressorResults.csv','w')
 MaterialFile2= pd.read_csv("CoulombResults.csv")
 #print("Input File reading Complete")
 target=[]
@@ -80,8 +85,11 @@ for i in range(0,len(MaterialFile)):
     row1.append(MaterialFile['lattA'][i])
     row1.append(MaterialFile['lattB'][i])
     row1.append(MaterialFile['lattC'][i])
+    #row1.append(MaterialFile['lattAlpha'][i])
+    #row1.append(MaterialFile['lattBeta'][i])
+    #row1.append(MaterialFile['lattGamma'][i])
     if MaterialFile['lattAlpha'][i]>0: #==MaterialFile['lattBeta'][i]==MaterialFile['lattGamma'][i]:
-        if i>9:
+        if i>10:
             descriptors.append(row1)
             target.append(MaterialFile['Epsilon'][i])
             TrainingName.append(MaterialFile['Comp'][i])
@@ -102,7 +110,8 @@ print(len(descriptors))
 #best_alpha = alphas[scores.index(max(scores))]
 #regr.alpha = best_alpha
 #fit=regr.fit(descriptors, target)
-regr=RandomForestRegressor(n_estimators=15,criterion='mse')
+
+#regr=RandomForestRegressor(n_estimators=,criterion='mse',warm_start=True)
 
 #cross-validation
 #for iteration in range(0,10):
@@ -111,8 +120,26 @@ regr=RandomForestRegressor(n_estimators=15,criterion='mse')
     #else:
         #re_regr=RandomForestRegressor(warm_start=True)
         #fitting=reregr.fit(breakingdown(descriptors,iteration,10),breakingdown(target,iteration,10))
+iteration_cycle=10
+iteration=0
+n_estimators=20
+#kf=KFold(n_split=iteration_cycle)
+regr=RandomForestRegressor(n_estimators=n_estimators,criterion='mse',warm_start=False)
+#regr=ML()
+'''
 
+while iteration < iteration_cycle:
+    n_estimators+=1
+    #regr=RandomForestRegressor(n_estimators=n_estimators,criterion='mse',warm_start=True)
+    x_training,x_cross,y_training,y_cross=train_test_split(descriptors,target,test_size=0.2,random_state=42)
+    fitting=regr.fit(x_training,y_training)
+    iteration+=1
+'''
+#scores=cross_val_score(regr,descriptors,target, cv=10)
 fitting=regr.fit(descriptors,target)
+
+#print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+
 fitting_score=fitting.score(descriptors_test,target_test)
 print(fitting_score)
 #print(regr.coef_)
@@ -137,12 +164,24 @@ for i in range(0,len(descriptors_test)):
     #predicted_value=fitting.predict(map(list,zip(*descriptors_test[i])))
     #for item in range(0,len(descriptors_test[i])):
         #predicted_value+=descriptors_test[i][item]*regr.coef_[item]
-    #print(predicted_value)
+    print(predicted_test[i])
+    print(target_test[i])
+    print('\n')
     f.write(str(predicted_test[i])+","+str(target_test[i])+"\n")
     std_score+=(predicted_test[i]-target_test[i])**2
 
 #f.write(str(fitting.predict(descriptors)))
 #f.write(str(fitting.predict(descriptors_test)))
 print(std_score)
+
+#plotting
+plt.plot(target,predicted_descriptor,'g^',target_test,predicted_test,'bs')
+plt.xlabel('experimental value')
+plt.ylabel('predicted value')
+regreession_line=np.polyfit(target,predicted_descriptor,1)
+pp=np.poly1d(regreession_line)
+plt.plot(target,pp(target),'r--')
+plt.axis([0,120,0,120])
+plt.show()
 
 f.close()
