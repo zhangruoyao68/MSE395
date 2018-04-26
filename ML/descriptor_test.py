@@ -92,6 +92,7 @@ def NameAnalyzer(NameToTest):
 #test.cv is the compound list
 #MaterialsFile=pd.read_csv("test.csv") #test1.csv is the modified data we collected
 #print(MaterialsFile)
+#
 g=open('CompoundDescriptorsMP_exception.csv','w')
 f=open('CompoundDescriptorsMP.csv','w')
 ID=[]

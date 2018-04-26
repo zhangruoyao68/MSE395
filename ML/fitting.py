@@ -122,7 +122,7 @@ print(len(descriptors))
         #fitting=reregr.fit(breakingdown(descriptors,iteration,10),breakingdown(target,iteration,10))
 iteration_cycle=10
 iteration=0
-n_estimators=20
+n_estimators=15
 #kf=KFold(n_split=iteration_cycle)
 regr=RandomForestRegressor(n_estimators=n_estimators,criterion='mse',warm_start=False)
 #regr=ML()
