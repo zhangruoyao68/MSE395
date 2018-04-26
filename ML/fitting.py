@@ -41,9 +41,9 @@ def breakingdown(Matrix,iteration,skipSize):
 
 start_time=time.time()
 
-MaterialFile=pd.read_csv("CompoundDescriptorsMP2.csv")
-f=open('NeuralNetworkRegressorResults.csv','w')
-MaterialFile2= pd.read_csv("CoulombResults.csv")
+MaterialFile=pd.read_csv("CompoundDescriptorsMP_static.csv")
+f=open('NeuralNetworkRegressorResults_static.csv','w')
+#MaterialFile2= pd.read_csv("CoulombResults.csv")
 #print("Input File reading Complete")
 target=[]
 descriptors=[]
@@ -56,11 +56,12 @@ for i in range(0,len(MaterialFile)):
     #if(MaterialFile['LattAlpha'][i]==MaterialFile['LattBeta'][i]==MaterialFile['LattGamma'][i]=90)
     row1=[]
     #Name.append(MaterialFile2['Material ID'][i])
-
-    row1.append(MaterialFile2['cm0'][i]/1000)
-    row1.append(MaterialFile2['cm1'][i]/1000)
-    row1.append(MaterialFile2['cm2'][i]/1000)
-
+    '''
+    should include CM later
+    #row1.append(MaterialFile2['cm0'][i]/1000)
+    #row1.append(MaterialFile2['cm1'][i]/1000)
+    #row1.append(MaterialFile2['cm2'][i]/1000)
+    '''
     row1.append(MaterialFile['NAtom'][i])
     row1.append(MaterialFile['sTot'][i])
     row1.append(MaterialFile['pTot'][i])
@@ -85,11 +86,11 @@ for i in range(0,len(MaterialFile)):
     row1.append(MaterialFile['lattA'][i])
     row1.append(MaterialFile['lattB'][i])
     row1.append(MaterialFile['lattC'][i])
-    #row1.append(MaterialFile['lattAlpha'][i])
-    #row1.append(MaterialFile['lattBeta'][i])
-    #row1.append(MaterialFile['lattGamma'][i])
+    row1.append(MaterialFile['lattAlpha'][i])
+    row1.append(MaterialFile['lattBeta'][i])
+    row1.append(MaterialFile['lattGamma'][i])
     if MaterialFile['lattAlpha'][i]>0: #==MaterialFile['lattBeta'][i]==MaterialFile['lattGamma'][i]:
-        if i>10:
+        if i%10!=0:
             descriptors.append(row1)
             target.append(MaterialFile['Epsilon'][i])
             TrainingName.append(MaterialFile['Comp'][i])
@@ -178,10 +179,10 @@ print(std_score)
 plt.plot(target,predicted_descriptor,'g^',target_test,predicted_test,'bs')
 plt.xlabel('experimental value')
 plt.ylabel('predicted value')
-regreession_line=np.polyfit(target,predicted_descriptor,1)
-pp=np.poly1d(regreession_line)
-plt.plot(target,pp(target),'r--')
-plt.axis([0,120,0,120])
+#regreession_line=np.polyfit(target,predicted_descriptor,1)
+#pp=np.poly1d(regreession_line)
+#plt.plot(target,pp(target),'r--')
+plt.axis([0,400,0,400])
 plt.show()
 
 f.close()
