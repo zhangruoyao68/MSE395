@@ -13,5 +13,6 @@ with MPRester(API_Key) as mp:
     data = mp.query(criteria={}, properties=["task_id"])
     for i in range(len(data)):
         MP_all.append(data[i]["task_id"])
-print(MP_all)
+#print(MP_all)
 print(len(MP_all))
+print(MP_all[2])
