@@ -35,7 +35,6 @@ def breakingdown(Matrix,iteration,skipSize):
     for item in range(0,len(Matrix)):
         if item<iteration*skipSize or item>(iteration+1)*skipSize:
             new_Matrix=np.append(Matrix(item))
-    #print(new_Matrix)
     return new_Matrix
 
 
@@ -62,6 +61,10 @@ for i in range(0,len(MaterialFile)):
     #row1.append(MaterialFile2['cm1'][i]/1000)
     #row1.append(MaterialFile2['cm2'][i]/1000)
     '''
+    row1.append(MaterialFile['AvgIonicRad'][i])
+    row1.append(MaterialFile['DevIonicRad'][i])
+    row1.append(MaterialFile['VolumeAverageMass'][i])
+    row1.append(MaterialFile['AvgElectron'][i])
     row1.append(MaterialFile['NAtom'][i])
     row1.append(MaterialFile['sTot'][i])
     row1.append(MaterialFile['pTot'][i])
@@ -82,7 +85,7 @@ for i in range(0,len(MaterialFile)):
     row1.append(MaterialFile['OmegaAvg'][i])
     row1.append(MaterialFile['OmegaDev'][i])
     row1.append(MaterialFile['gap'][i])
-    #row1.append(MaterialFile['formE'][i])
+    row1.append(MaterialFile['formE'][i])
     row1.append(MaterialFile['lattA'][i])
     row1.append(MaterialFile['lattB'][i])
     row1.append(MaterialFile['lattC'][i])

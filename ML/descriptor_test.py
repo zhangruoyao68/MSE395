@@ -90,31 +90,19 @@ def NameAnalyzer(NameToTest):
     return(SeparatedName)
 
 #test.cv is the compound list
-#MaterialsFile=pd.read_csv("test.csv") #test1.csv is the modified data we collected
-#print(MaterialsFile)
-#
+
 g=open('CompoundDescriptorsMP_exception.csv','w')
 f=open('CompoundDescriptorsMP.csv','w')
 ID=[]
 target=[]
-'''
-for i in range(0,len(MaterialsFile)):
-  ID.append(MaterialsFile['Materials ID'][i]) #containing all the IDs of training set
-  target.append(MaterialsFile['Epsilon'][i])
-numMaterials=len(ID)
-print("reading SourceFile completion")
 
-#print(ID)
-#print("Number Of Materials Analyzed:---%s---" % (numMaterials))
-'''
 API_Key='pF2RrzEPyZmIsLST'
 m=MPRester(API_Key)
 
 MPID_DICT= m.query(criteria={}, properties=["task_id"])
 numMaterials=len(MPID_DICT)
 print("Number Of Materials Analyzed:---%s---" % (numMaterials))
-#print(ID)
-#print("Number Of Materials Analyzed:---%s---" % (numMaterials))
+
 '''
 Compounds=[]
 for i in range(0,len(ID)):
@@ -204,53 +192,30 @@ for elem in Elements:
     row.append(float(block[element(elem).block]))
     row.append(atom_r**3*10**(-7))
     ElemData.append(row)
-    #print(row)
-#ElementData={d[0]: d[1:] for d in ElemData}
-#print(ElemData)
+
 Database=[]
 print("Element Data Collection Completion:--- %s seconds ---" % (time.time() - start_time))
-    #csvfile.write(Comp+,"+sTot+","+pTot+","+dTot+","+fTor,AverageMass,DevMass,RedMass,AvgENeg,DiffENeg,DevENeg,AvgDipole')
-    #csvfile.write('DevDipole,DiffDipole,TotalVolume,totalAtoms,density,OmegaAvg,OmegaDev,OmegaMax,OmegaMin')
-    #csvfile.write('eHull,formE,gap,symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma\n')
+ )
 f.write('Comp,Epsilon,sTot,pTot,dTot,fTot,NAtom,AverageMass,DevMass,RedMass,AvgENeg,DiffENeg,DevENeg,AvgDipole,DevDipole,DiffDipole,TotalVolume,totalAtoms,density,OmegaAvg,OmegaDev,OmegaMax,OmegaMin,eHull,formE,gap,symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma')
 f.write('\n')
 
 numberofanalyzed=0
 for i in range(0,numMaterials):
-    #Comp,MPID=Compounds[i].split("_")
-    #Comp=Compounds[i]
-    #print(Comp)
-    #MatName=NameAnalyzer(Comp)
-    #if 'Ac' in MatName:
-    #    continue
-
+  
     res=str(MPID_DICT[i])
     MPID_length=len(res)
     stabdata = m.query(criteria={'material_id':res[13:MPID_length-2]}, properties=["pretty_formula", "e_above_hull",
                                                                       "formation_energy_per_atom","band_gap",
                                                                       "spacegroup.number",'volume',
-                                                                      'structure','density','e_above_hull','nsites'])
+                                                                      'structure','density','nsites'])
 
-    #print(stabdata)
-    #print(stabdata[0]['spacegroup.number'])
-    #stabdata = m.query(criteria={"pretty_formula": Comp}, properties=["material_id"])
-    #if stabdata:
-        #mini=min(stabdata, key=lambda x:x['formation_energy_per_atom'])
-        #if 'material_id' in mini:
-    #print(stabdata)
+  
     symm=SymmGroupFinder(stabdata[0]['spacegroup.number'])
-    #num = Compounds[i]
+  
     gap = stabdata[0]['band_gap']
     volume=stabdata[0]['volume']
     formE=stabdata[0]['formation_energy_per_atom']
-    '''
-    lattA=str.format("{0:.6f}",stabdata[0]['structure'].lattice.a)
-    lattB=str.format("{0:.6f}",stabdata[0]['structure'].lattice.b)
-    lattC=str.format("{0:.6f}",stabdata[0]['structure'].lattice.c)
-    lattAlpha=str.format("{0:.6f}",stabdata[0]['structure'].lattice.angles[0])
-    lattBeta=str.format("{0:.6f}",stabdata[0]['structure'].lattice.angles[1])
-    lattGamma=str.format("{0:.6f}",stabdata[0]['structure'].lattice.angles[2])
-    '''
+    
     lattA=stabdata[0]['structure'].lattice.a
     lattB=stabdata[0]['structure'].lattice.b
     lattC=stabdata[0]['structure'].lattice.c
@@ -263,17 +228,14 @@ for i in range(0,numMaterials):
     NAtom=stabdata[0]['nsites']
     Comp=stabdata[0]['pretty_formula']
     MatName=NameAnalyzer(Comp)
-    #if ('Ac' or 'Pu') in MatName:
-    #    continue
-    #print(Comp,num,gap)
-
+   
     try:
-        #print("try")
+        
         AtomicRatio=[float(k) for k in MatName[1::2]]
-        #print(AtomicRatio)
+        
         AtomicSpecies=[k for k in MatName[0::2]]
         totalAtoms=sum([float(k) for k in MatName[1::2]]) #total number of atoms in formula unit
-        #print(MatName,AtomicSpecies,AtomicWeights,totalAtoms)
+        
 
         #initization of all data to be pulled from ElemData
         sTot=0
@@ -350,18 +312,11 @@ for i in range(0,numMaterials):
         DiffDipole=max(Dipoles)-min(Dipoles)
         TotalVolume = np.sum(Volumes)
 
-        #print("Halfway")
+       
         '''
-        Masses=[ElemData[a][5] for a in AtomicSpecies] #mass descriptors
-        #RedMass=(sum([b/a for a,b in zip(Masses,AtomicRatio)]))**-1
-        #AverageMass=np.average(Masses,weights=AtomicRatio)
-        #DevMass=math.sqrt(abs(np.average([c**2 for c in Masses],weights=AtomicRatio)-AverageMass**2))
+        
 
-        #ENegs=[Elem[a][5] for a in AtomicSpecies] #electronegativity descriptors
-        #AvgENeg=np.average(ENegs,weights=AtomicRatio)
-        #DiffENeg=max(ENegs)-min(ENegs)
-        #DevENeg=math.sqrt(abs(np.average([c**2 for c in ENegs],weights=AtomicRatio)-AvgENeg**2))
-        #print(ENegs,AvgENeg,DiffENeg,DevENeg)
+      
 
         #IonEns=[ElementData[a][6] for a in AtomicSpecies]
         #AtomicRads=[ElementData[a][7] for a in AtomicSpecies]
@@ -378,10 +333,9 @@ for i in range(0,numMaterials):
                     AtomicRads_ENHigh=AtomicRads[q]
                     AtomicRads_IonEnLow=AtomicRads[qq]
                     Springs.append((ENHigh+IonEnLow)/((AtomicRads_ENHigh+AtomicRads_IonEnLow)**2))
-                    #freq=math.sqrt((ENHigh+IonEnLow)/((R1+R2)**2)/RedMass)
+                    
 
-
-        #Omega calculation
+    
         Omegas=[]
         for h in range(0,len(Springs)):
             Omegas.append(math.sqrt(Springs[h]/RedMass))
@@ -392,21 +346,12 @@ for i in range(0,numMaterials):
         OmegaMin=min(Omegas)
 
 
-        #output list
-        #print(Comp)
-        #print(sTot,pTot,dTot,fTot)
-        #print(AverageMass,DevMass,RedMass)
-        #print(AvgENeg,DiffENeg,DevENeg)
-        #print(AvgDipole,DevDipole,DiffDipole)
-        #print(TotalVolume,totalAtoms,density)
-        #print(OmegaAvg,OmegaDev,OmegaMax,OmegaMin)
-        #print(eHull,formE,gap)
-        #print(symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma)
+       
 
 
 
         row=[Comp,sTot,pTot,dTot,fTot,NAtom,AverageMass,DevMass,RedMass,AvgENeg,DiffENeg,DevENeg,AvgDipole,DevDipole,DiffDipole,TotalVolume,totalAtoms,density,OmegaAvg,OmegaDev,OmegaMax,OmegaMin,eHull,formE,gap,symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma]
-        #print(row1)
+        
         for item in row:
             f.write(str(item)+',')
         f.write('\n')
@@ -425,11 +370,7 @@ for i in range(0,numMaterials):
         DevIonicRad=math.sqrt(abs(np.average([c**2 for c in IonicRadii])-AvgIonicRad**2))
 
 
-        Dipoles=[ElementData[a][9] for a in AtomicSpecies]
-        AvgDipole=np.mean(Dipoles)
-        DevDipole=math.sqrt(abs(np.average([c**2 for c in Dipoles])-AvgDipole**2))
-        DiffDipole=max(Dipoles)-min(Dipoles)
-        print(AvgDipole)
+
 
 
         block = {'s':0,'p':1,'d':2,'f':3}
@@ -445,21 +386,7 @@ for i in range(0,numMaterials):
         #Density of States####delete
         #have not realized yet
         '''
-        DOSes=[ElementData[a][12] for a in AtomicSpecies]
-        TotalDOS=sum([a*b for a,b in zip(DOSes,AtomicRatio)])
-        DOSperVol=TotalDOS/TotalVolume
-        AvgDOS=TotalDOS/totalAtoms
-        MaxDOS=max(DOSes)
-        MinDOS=min(DOSes)
-
-        Susceptibilities=[ElementData[a][13] for a in AtomicSpecies]
-        TotalSusc=sum([a*b for a,b in zip(Susceptibilities,AtomicRatio)])
-        AvgSusc=np.mean([a*b for a,b in zip(Susceptibilities,AtomicRatio)])
-        AvgAtSusc=TotalSusc/totalAtoms
-        AvgVolSusc=TotalSusc/TotalVolume
-        MaxSusc=max(Susceptibilities)
-        MinSusc=min(Susceptibilities)
-        devSusc=math.sqrt(abs(np.average([c**2 for c in Susceptibilities])-AvgSusc**2))
+       
 
 
         data=[Comp,Compounds[i],sTot,pTot,dTot,fTot,RedMass,AverageMass,DevMass,AvgENeg,DiffENeg,DevENeg,OmegaAvg,OmegaDev,OmegaMax,OmegaMin,
@@ -470,12 +397,7 @@ for i in range(0,numMaterials):
               volume,formE,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma,density,NAtom
               ]
         '''
-        '''
-        for item in data:
-            f.write(str(item)+',')
-        f.write('\n')
-        #f.write(str(TcValues[i])+'\n')
-        '''
+
     except:
         print("exception")
         data=[Comp,Comp,0,0,0,0,0,0,0,0,0,0,0,0,0,
