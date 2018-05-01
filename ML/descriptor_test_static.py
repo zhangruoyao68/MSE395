@@ -89,8 +89,8 @@ def NameAnalyzer(NameToTest):
                         SeparatedName.append(str(multiplier))
     return(SeparatedName)
 
-#test.cv is the compound list
-MaterialsFile=pd.read_csv("test_static.csv") #test1.csv is the modified data we collected
+#.csv is the compound list
+MaterialsFile=pd.read_csv("test_static.csv") #.csv is the modified data we collected
 print(MaterialsFile)
 
 f=open('CompoundDescriptorsMP_static.csv','w')
@@ -193,7 +193,7 @@ for elem in Elements:
 Database=[]
 print("Element Data Collection Completion:--- %s seconds ---" % (time.time() - start_time))
    
-f.write('Comp,Epsilon,AvgElectron,sTot,pTot,dTot,fTot,NAtom,AvgIonicRad,DevIonicRad,VolumeAverageMass,AverageMass,DevMass,RedMass,AvgENeg,DiffENeg,DevENeg,AvgDipole,DevDipole,DiffDipole,TotalVolume,totalAtoms,density,OmegaAvg,OmegaDev,OmegaMax,OmegaMin,eHull,formE,gap,symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma')
+f.write('Comp,MPID,target,AvgElectron,sTot,pTot,dTot,fTot,NAtom,AvgIonicRad,DevIonicRad,VolumeAverageMass,AverageMass,DevMass,RedMass,AvgENeg,DiffENeg,DevENeg,AvgDipole,DevDipole,DiffDipole,TotalVolume,totalAtoms,density,OmegaAvg,OmegaDev,OmegaMax,OmegaMin,eHull,formE,gap,symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma')
 f.write('\n')
 
 numberofanalyzed=0
@@ -341,7 +341,7 @@ for i in range(0,numMaterials):
         print("Compound Analyzed:"+Comp)
         
 
-        row=[Comp,target[i],AvgElectron,sTot,pTot,dTot,fTot,NAtom,AvgIonicRad,DevIonicRad,VolumeAverageMass,AverageMass,DevMass,RedMass,AvgENeg,DiffENeg,DevENeg,AvgDipole,DevDipole,DiffDipole,TotalVolume,totalAtoms,density,OmegaAvg,OmegaDev,OmegaMax,OmegaMin,eHull,formE,gap,symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma]
+        row=[Comp,ID[i],target[i],AvgElectron,sTot,pTot,dTot,fTot,NAtom,AvgIonicRad,DevIonicRad,VolumeAverageMass,AverageMass,DevMass,RedMass,AvgENeg,DiffENeg,DevENeg,AvgDipole,DevDipole,DiffDipole,TotalVolume,totalAtoms,density,OmegaAvg,OmegaDev,OmegaMax,OmegaMin,eHull,formE,gap,symm,lattA,lattB,lattC,lattAlpha,lattBeta,lattGamma]
         #print(row1)
         for item in row:
             f.write(str(item)+',')

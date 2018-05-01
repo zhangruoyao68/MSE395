@@ -41,30 +41,27 @@ def breakingdown(Matrix,iteration,skipSize):
 start_time=time.time()
 
 MaterialFile=pd.read_csv("CompoundDescriptorsMP_static.csv")
+MaterialFile2=pd.read_csv("CompoundDescriptorsMP.csv")
+
+
 f=open('NeuralNetworkRegressorResults_static.csv','w')
-#MaterialFile2= pd.read_csv("CoulombResults.csv")
-#print("Input File reading Complete")
+f.write('Material ID,Epsilon')
+f.write('\n')
+print("Locating File Complete")
 target=[]
 descriptors=[]
 Name=[]
-target_test=[]
 descriptors_test=[]
-TrainingName=[]
-TestingName=[]
+ID=[]
+
 for i in range(0,len(MaterialFile)):
-    #if(MaterialFile['LattAlpha'][i]==MaterialFile['LattBeta'][i]==MaterialFile['LattGamma'][i]=90)
     row1=[]
-    #Name.append(MaterialFile2['Material ID'][i])
-    '''
-    should include CM later
-    #row1.append(MaterialFile2['cm0'][i]/1000)
-    #row1.append(MaterialFile2['cm1'][i]/1000)
-    #row1.append(MaterialFile2['cm2'][i]/1000)
-    '''
-    row1.append(MaterialFile['AvgIonicRad'][i])
-    row1.append(MaterialFile['DevIonicRad'][i])
-    row1.append(MaterialFile['VolumeAverageMass'][i])
-    row1.append(MaterialFile['AvgElectron'][i])
+    
+    row1.append(MaterialFile['cm0'][i])
+    row1.append(MaterialFile['cm1'][i])
+    row1.append(MaterialFile['cm2'][i])
+    
+    
     row1.append(MaterialFile['NAtom'][i])
     row1.append(MaterialFile['sTot'][i])
     row1.append(MaterialFile['pTot'][i])
@@ -93,16 +90,51 @@ for i in range(0,len(MaterialFile)):
     row1.append(MaterialFile['lattBeta'][i])
     row1.append(MaterialFile['lattGamma'][i])
     if MaterialFile['lattAlpha'][i]>0: #==MaterialFile['lattBeta'][i]==MaterialFile['lattGamma'][i]:
-        if i%10!=0:
-            descriptors.append(row1)
-            target.append(MaterialFile['Epsilon'][i])
-            TrainingName.append(MaterialFile['Comp'][i])
-        else:
-            descriptors_test.append(row1)
-            target_test.append(MaterialFile['Epsilon'][i])
-            TestingName.append(MaterialFile['Comp'][i])
+        descriptors.append(row1)
+        target.append(MaterialFile['Epsilon'][i])
+
+for i in range(0,len(MaterialFile2)):
+    row1=[]
+
+    row1.append(MaterialFile2['cm0'][i])
+    row1.append(MaterialFile2['cm1'][i])
+    row1.append(MaterialFile2['cm2'][i])
+
+    row1.append(MaterialFile2['NAtom'][i])
+    row1.append(MaterialFile2['sTot'][i])
+    row1.append(MaterialFile2['pTot'][i])
+    row1.append(MaterialFile2['dTot'][i])
+    row1.append(MaterialFile2['fTot'][i])
+    row1.append(MaterialFile2['AverageMass'][i])
+    row1.append(MaterialFile2['DevMass'][i])
+    row1.append(MaterialFile2['RedMass'][i])
+    row1.append(MaterialFile2['AvgENeg'][i])
+    row1.append(MaterialFile2['DevENeg'][i])
+    row1.append(MaterialFile2['DiffENeg'][i])
+    row1.append(MaterialFile2['AvgDipole'][i])
+    row1.append(MaterialFile2['DevDipole'][i])
+    row1.append(MaterialFile2['DiffDipole'][i])
+    row1.append(MaterialFile2['TotalVolume'][i])
+    row1.append(MaterialFile2['totalAtoms'][i])
+    row1.append(MaterialFile2['density'][i])
+    row1.append(MaterialFile2['OmegaAvg'][i])
+    row1.append(MaterialFile2['OmegaDev'][i])
+    row1.append(MaterialFile2['gap'][i])
+    row1.append(MaterialFile2['formE'][i])
+    row1.append(MaterialFile2['lattA'][i])
+    row1.append(MaterialFile2['lattB'][i])
+    row1.append(MaterialFile2['lattC'][i])
+    row1.append(MaterialFile2['lattAlpha'][i])
+    row1.append(MaterialFile2['lattBeta'][i])
+    row1.append(MaterialFile2['lattGamma'][i])
+    if MaterialFile2['lattAlpha'][i]>0: #==MaterialFile['lattBeta'][i]==MaterialFile['lattGamma'][i]:
+        descriptors_test.append(row1)
+        ID.append(MaterialFile2['MPID'][i])
+        
 print("Input File reading Complete")
 print(len(descriptors))
+print(len(descriptors_test))
+print(len(ID))
 
 #chossing the best alpha
 
@@ -142,20 +174,10 @@ while iteration < iteration_cycle:
 #scores=cross_val_score(regr,descriptors,target, cv=10)
 fitting=regr.fit(descriptors,target)
 
-#print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
-
-fitting_score=fitting.score(descriptors_test,target_test)
-print(fitting_score)
-#print(regr.coef_)
-std_score=0
-predicted_descriptor=[]
 predicted_test=[]
-predicted_descriptor=fitting.predict(descriptors)
 predicted_test=fitting.predict(descriptors_test)
-#predicted_value.append(fitting.predict(descriptors_test))
-#print(predicted_descriptor)
-#print(predicted_test)
 
+'''
 for i in range(0,len(predicted_descriptor)):
 
     #for item in range(0,len(descriptors[i])):
@@ -173,12 +195,20 @@ for i in range(0,len(descriptors_test)):
     print('\n')
     f.write(str(predicted_test[i])+","+str(target_test[i])+"\n")
     std_score+=(predicted_test[i]-target_test[i])**2
-
-#f.write(str(fitting.predict(descriptors)))
+'''
+for i in range(len(predicted_test)):
+    row3=[]
+    row3.append((ID[i]))
+    row3.append((predicted_test[i]))
+    for item in range(len(row3)):
+        f.write(str(row3[item])+',')   
+    f.write('\n')
+    
 #f.write(str(fitting.predict(descriptors_test)))
-print(std_score)
+
 
 #plotting
+'''
 plt.plot(target,predicted_descriptor,'g^',target_test,predicted_test,'bs')
 plt.xlabel('experimental value')
 plt.ylabel('predicted value')
@@ -187,5 +217,6 @@ plt.ylabel('predicted value')
 #plt.plot(target,pp(target),'r--')
 plt.axis([0,400,0,400])
 plt.show()
+'''
 
 f.close()
